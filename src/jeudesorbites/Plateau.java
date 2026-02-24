@@ -8,9 +8,9 @@ import java.util.Random;
  */
 public class Plateau {
    
-    public Lettre[] Plateau1 = new Lettre[8];
+    public Lettre[] Plateau1 = new Lettre[8];// attribut
 
-    public Plateau() {
+    public Plateau() { // constructeur
         for (int i = 0; i < 8; i++) {
             Plateau1[i] = null; 
         }
