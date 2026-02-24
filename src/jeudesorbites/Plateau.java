@@ -9,6 +9,7 @@ import java.util.Random;
 public class Plateau {
    
     public Lettre[] Plateau1 = new Lettre[8];// attribut
+    public Lettre[] Plateau2 = new Lettre[4];
 
     public Plateau() { // constructeur
         for (int i = 0; i < 8; i++) {
@@ -16,7 +17,11 @@ public class Plateau {
         }
     }
     
-    public void AjouterLettre(Lettre[] alphabetMin) {
+    public void AjouterPremiereLettre(){
+        
+    }
+    
+    public void AjouterLettreHasard(Lettre[] alphabetMin) {
         
         
         Random rand = new Random();
