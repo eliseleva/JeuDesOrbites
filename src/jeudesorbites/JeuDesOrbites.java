@@ -15,6 +15,7 @@ public class JeuDesOrbites {
     int choixLettre = rand.nextInt(24);
     
     public static void main(String[] args) {
+        System.out.println("blabla");
         
     }
         
