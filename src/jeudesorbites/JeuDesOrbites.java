@@ -18,7 +18,7 @@ public class JeuDesOrbites {
         Lettre maLettre= new Lettre("",1);
         Plateau monPlateau = new Plateau();
         
-        monPlateau.plateau_affichage
+        monPlateau.plateau_affichage(args);
         
         System.out.println("blabla");
         
