@@ -5,8 +5,6 @@ package jeudesorbites;
  * @author elise_admin
  */
 
-import java.util.Random;
-
 
 
 public class JeuDesOrbites {
@@ -20,7 +18,7 @@ public class JeuDesOrbites {
         
         monPlateau.plateau_affichage(args);
         
-        System.out.println("blabla");
+        System.out.println("blablac");
         
     }
         
