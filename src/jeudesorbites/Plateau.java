@@ -66,27 +66,48 @@ public class Plateau {
         else if(choixLettre==1){
             return this.tableau_lettre_grec.getalphabetMin(1);
         }
-        if (choixLettre==2){
+        else if (choixLettre==2){
             return this.tableau_lettre_grec.getalphabetMaj(0);
         }
-        if (choixLettre==3){
+        else if (choixLettre==3){
             return this.tableau_lettre_grec.getalphabetMaj(1);
         }
-        if (choixLettre==4){
+        else {
             return this.tableau_lettre_grec.getalphabetMaj(2);
         }
+        
     }
-    
-    public boolean existe_il_un_emplacement_vide(){
+    //Plateau 1
+    public boolean existe_il_un_emplacement_vide_plateau1(){
         int n=0;
         while (n<plateau1.length){
             if (plateau1[n].est_vide()){
+                System.out.println("Le plateau1 a au moins un emplacement vide");
                 return true;
-                System.out.println("Le plateau a au moins un emaplecement vide");
             }
             n++;
         }
+        return false;
     }
+    
+    //Plateau 2
+    public boolean existe_il_un_emplacement_vide_plateau2(){
+        int n=0;
+        while (n<plateau2.length){
+            if (plateau2[n].est_vide()){
+                System.out.println("Le plateau2 a au moins un emplacement vide");
+                return true;
+            }
+            n++;
+        }
+        return false;
+    }
+    
+    //centre
+    public boolean existe_il_un_emplacement_vide_centre(){
+           return centre[0].est_vide();
+    }
+
         
         
          
