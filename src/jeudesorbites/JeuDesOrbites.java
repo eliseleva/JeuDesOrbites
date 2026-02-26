@@ -8,19 +8,19 @@ package jeudesorbites;
 
 
 public class JeuDesOrbites {
-    
-  
-    
     public static void main(String[] args) {
         
-        Lettre maLettre= new Lettre("",1);
-        Plateau monPlateau = new Plateau();
-        Jeu monJeu= new Jeu();
-        
-        monPlateau.plateau_affichage(args);
+        Lettre lettre_alpha = new Lettre("alpha",1);
+        Lettre lettre_beta = new Lettre("beta",1);
         
         
-        System.out.println("blablac");
+        //Plateau monPlateau = new Plateau();
+        //Jeu monJeu= new Jeu();
+        
+        //monPlateau.plateau_affichage(args);
+        
+         
+        System.out.println(lettre_beta);
         
     }
         
