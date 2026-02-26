@@ -5,14 +5,30 @@ package jeudesorbites;
  * @author elise_admin
  */
 public class Jeu {
-    private Lettre[] alphabetMin = new Lettre[24];
-    private Lettre[] alphabetMaj = new Lettre[3];
+
+    private Plateau plateau;
     
     
     public Jeu() {      
+ 
+        // Joueur 
+        // compteur tour
+        // reserve symbole
+        // Lettres
+  
+        //
         
+        this.plateau = new Plateau();
       
     }
+    
+    public void start()
+    {
+        this.plateau.plateau_affichage();
+        
+        Lettre Lettre_choisi = this.plateau.ChoisitLettreHasard();
+    }
+   
     
    
 }
