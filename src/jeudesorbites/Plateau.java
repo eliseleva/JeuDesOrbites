@@ -13,7 +13,7 @@ public class Plateau {
     private Lettre[] centre = new Lettre[1];
     private TableauLettresGrecs tableau_lettre_grec;
 
-    public Plateau() { // constructeur
+    public Plateau() { // constructeurs
         this.tableau_lettre_grec = new TableauLettresGrecs();
         
         Lettre lettre_zero = this.tableau_lettre_grec.getzero();
