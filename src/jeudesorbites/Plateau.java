@@ -147,8 +147,8 @@ public class Plateau {
 		text += "\n      \\          \\______    " + p2_2 + "    _____/          /       |";
 		text += "\n       \\                       |                       /        |";
 		text += "\n      " + p1_3 + "                 |                 " + p1_5 + "       |";
-		text += "\n         \\                     |                  /             |";
-        text += "\n          \\___________     " + p1_4 + "    __________/              |";
+		text += "\n         \\                     |                    /           |";
+        text += "\n          \\___________     " + p1_4 + "    ____________/            |";
         text += "\n";
 		
         printWriter.println(text);
