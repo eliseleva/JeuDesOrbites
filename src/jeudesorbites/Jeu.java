@@ -43,16 +43,16 @@ public class Jeu {
             System.out.println("Le plateau choisit est " + Choix );
 
 
-            if (Choix=="1"){
-                System.out.println(this.plateau.existe_il_un_emplacement_vide_plateau1());
+            if (Choix.equals("1")){
+                // System.out.println(this.plateau.existe_il_un_emplacement_vide_plateau1());
                 condition = this.plateau.existe_il_un_emplacement_vide_plateau1();
             }
-            else if (Choix=="2"){
-                System.out.println(this.plateau.existe_il_un_emplacement_vide_plateau2());
+            else if (Choix.equals("2")){
+                // System.out.println(this.plateau.existe_il_un_emplacement_vide_plateau2());
                 condition = this.plateau.existe_il_un_emplacement_vide_plateau2();
             }
-            else if (Choix=="3"){  
-                System.out.println(this.plateau.existe_il_un_emplacement_vide_centre());
+            else if (Choix.equals("3")){  
+                // System.out.println(this.plateau.existe_il_un_emplacement_vide_centre());
                 condition = this.plateau.existe_il_un_emplacement_vide_centre();
             }
             else
@@ -70,9 +70,6 @@ public class Jeu {
 //        while (il existe parli l'')
         this.next_tour();
         this.next_tour();
-        
-        
-        
         
     }
    
