@@ -41,7 +41,7 @@ public class TableauLettresGrecs {
 
         
         this.alphabetMaj[0]= new LettreMajuscule("  DELTA ", 30); // avec Class Lettre Maj
-        this.alphabetMaj[1]= new LettreMajuscule("  LAMBDA ", 40);
+        this.alphabetMaj[1]= new LettreMajuscule(" LAMBDA ", 40);
         this.alphabetMaj[2]= new LettreMajuscule("  SIGMA ", 50);
         
         
@@ -49,17 +49,17 @@ public class TableauLettresGrecs {
     }
     
     public Lettre getalphabetMin(int n){
-        return new Lettre(this.alphabetMin[n].getnom(), this.alphabetMin[n].getscore());// copie 
+        return new Lettre(this.alphabetMin[n].getnom(), this.alphabetMin[n].getvaleur());// copie 
     }
    
     
     public LettreMajuscule getalphabetMaj(int n){
-        return new LettreMajuscule(this.alphabetMaj[n].getnom(), this.alphabetMaj[n].getscore());// copies indépendnates
+        return new LettreMajuscule(this.alphabetMaj[n].getnom(), this.alphabetMaj[n].getvaleur());// copies indépendnates
        
     }
     
      public Lettre getzero(){
-        return new Lettre(this.zero_letter.getnom(), this.zero_letter.getscore());
+        return new Lettre(this.zero_letter.getnom(), this.zero_letter.getvaleur());
     }
   
    

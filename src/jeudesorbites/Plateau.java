@@ -108,7 +108,18 @@ public class Plateau {
            return centre[0].est_vide();
     }
 
-        
+    
+    public void modifie_une_lettre_plateau1(int n, Lettre Lettre_choisi ) {
+        this.plateau1[n] = Lettre_choisi;
+    }
+
+    public void modifie_une_lettre_plateau2(int n, Lettre Lettre_choisi ) {
+        this.plateau2[n] = Lettre_choisi;
+    }
+
+    public void modifie_une_lettre_centre(Lettre Lettre_choisi ) {
+        this.centre[0] = Lettre_choisi;
+    }
         
          
     public void plateau_affichage() {

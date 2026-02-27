@@ -19,10 +19,10 @@ public class LettreMajuscule extends Lettre{
     
      
     @Override
-    public int getscore(){  
+    public int getvaleur(){  
     // ajoute Override car on est dans la classe fille et on
     //redefini/surcharge une methode qui est presente dans la classe mere
-        return super.getscore() + this.TempPrecense - (this.TempPrecense%10); // reste division euclidienne
+        return super.getvaleur() + this.TempPrecense - (this.TempPrecense%10); // reste division euclidienne
         
     }   
 }

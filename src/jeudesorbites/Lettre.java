@@ -7,31 +7,31 @@ package jeudesorbites;
  */
 public class Lettre {
     private String nom;
-    private int score;
+    private int valeur;
     
-    public Lettre(String nom, int score){//initialise 
+    public Lettre(String nom, int valeur){//initialise 
         this.nom= nom;
-        this.score=score;
+        this.valeur=valeur;
     }
       
     @Override
     public String toString(){
-        return nom;
+        return this.nom;
     }
     
     public boolean est_vide(){
-    if (this.score==0){
+    if (this.valeur==0){
         return true;
     }
     else {
         return false;
     }
-    //         return this.score==0;// fonctionne car si this.score=0 alors forcement true, ts les autres cas sont false
+    //         return this.valeur==0;// fonctionne car si this.valeur=0 alors forcement true, ts les autres cas sont false
     }
     
     
-    public int getscore(){
-        return this.score;
+    public int getvaleur(){
+        return this.valeur;
         
     }
 
