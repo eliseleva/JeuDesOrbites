@@ -45,7 +45,7 @@ public class TableauLettresGrecs {
         this.alphabetMaj[2]= new LettreMajuscule("  SIGMA ", 50);
         
         
-        this.zero_letter = new Lettre("        ", 0);
+        this.zero_letter = new Lettre("XXXXXXXX", 0);
     }
     
     public Lettre getalphabetMin(int n){

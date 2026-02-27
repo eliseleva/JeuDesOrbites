@@ -132,23 +132,25 @@ public class Plateau {
 
         String c = this.centre[0].toString();  // CENTRE
 
-        String text = "";
-        text += "\n          /‾‾‾‾‾ " + p1_0 + " ‾‾‾‾‾\\";        // Nord P1
-        text += "\n         /       |       \\";
-        text += "\n       " + p1_1 + "        |        " + p1_7; // NO (1) et NE (7)
-        text += "\n       /         |         \\";
-        text += "\n      /      /‾‾ " + p2_0 + " ‾‾\\      \\";    // Nord P2
-        text += "\n     |      |    |    |      |";
-        text += "\n     |      |    |    |      |";
-        text += "\n     " + p1_2 + " ---- " + p2_1 + " -- " + c + " -- " + p2_3 + " ---- " + p1_6; // Ouest (2/1) -> Centre -> Est (6/3)
-        text += "\n     |      |    |    |      |";
-        text += "\n     |      |    |    |      |";
-        text += "\n      \\      \\__ " + p2_2 + " __/      /";    // Sud P2
-        text += "\n       \\         |         /";
-        text += "\n        " + p1_3 + "        |        " + p1_5; // SO (3) et SE (5)
-        text += "\n         \\       |       /";
-        text += "\n          \\_____ " + p1_4 + " _____/";        // Sud P1
-
+        String text = "\n";
+        text += "\n           ___________                 ___________              |";
+        text += "\n          /                " + p1_0 + "                \\            |";
+        text += "\n         /                     |                    \\           |";
+        text += "\n     " + p1_1 +  "                  |                 " + p1_7 + "       |";
+        text += "\n       /          _______      |       _____            \\       |";
+        text += "\n      /          /          " + p2_0 + "        \\            \\      |";
+        text += "\n     |           |             |             |           |      |";
+        text += "\n     |           |             |             |           |      |";
+        text += "\n " + p1_2 + " -- " + p2_1 + "  --  " + c + "  --  " + p2_3 + "  --  " + p1_6 + " |";
+		text += "\n     |           |             |             |           |      |";
+		text += "\n     |           |             |             |           |      |";
+		text += "\n      \\          \\______    " + p2_2 + "    _____/          /       |";
+		text += "\n       \\                       |                       /        |";
+		text += "\n      " + p1_3 + "                 |                 " + p1_5 + "       |";
+		text += "\n         \\                     |                  /             |";
+        text += "\n          \\___________     " + p1_4 + "    __________/              |";
+        text += "\n";
+		
         printWriter.println(text);
     }
     
