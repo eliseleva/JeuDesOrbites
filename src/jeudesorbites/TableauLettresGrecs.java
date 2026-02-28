@@ -40,26 +40,63 @@ public class TableauLettresGrecs {
         
 
         
-        this.alphabetMaj[0]= new LettreMajuscule("  DELTA ", 30); // avec Class Lettre Maj
-        this.alphabetMaj[1]= new LettreMajuscule(" LAMBDA ", 40);
-        this.alphabetMaj[2]= new LettreMajuscule("  SIGMA ", 50);
+        this.alphabetMaj[0]= new LettreMajuscule("DELTA ", 30); // avec Class Lettre Maj
+        this.alphabetMaj[1]= new LettreMajuscule("LAMBDA", 40);
+        this.alphabetMaj[2]= new LettreMajuscule("SIGMA ", 50);
         
         
         this.zero_letter = new Lettre("XXXXXXXX", 0);
     }
     
-    public Lettre getalphabetMin(int n){
-        return new Lettre(this.alphabetMin[n].getnom(), this.alphabetMin[n].getvaleur());// copie 
+    public Lettre getalphabetMinuscule(int n){
+        return new Lettre(this.alphabetMin[n].getnom(), this.alphabetMin[n].getvaleur());// copie indépendnates
     }
    
     
-    public LettreMajuscule getalphabetMaj(int n){
-        return new LettreMajuscule(this.alphabetMaj[n].getnom(), this.alphabetMaj[n].getvaleur());// copies indépendnates
+    public LettreMajuscule getalphabetMajuscule(int n, int presence){
+        return new LettreMajuscule(this.alphabetMaj[n].getnom(), this.alphabetMaj[n].getvaleur(), presence);// copies indépendnates
        
     }
     
-     public Lettre getzero(){
+    public Lettre getzero() {
         return new Lettre(this.zero_letter.getnom(), this.zero_letter.getvaleur());
+    }
+    
+    public Lettre next_lettre_majuscule_vs_minuscule(Lettre a)
+    {
+        if (a.est_ce_une_minuscule())
+        {
+            return this.getalphabetMinuscule(a.get_next_indice());
+        }
+        else
+        {
+            return this.getalphabetMajuscule(a.get_next_indice(), -1);
+        }
+    }
+
+    public Lettre fusion(Lettre a, Lettre b, boolean symbol_plus_noir)
+    {
+
+        // cas particulier si on à la dernière lettre
+        if (!symbol_plus_noir)
+        {
+            // Quand on fusionne deux lettres identiques, on renvoie la lettre suivante dans le tableau
+            // des majuscules ou des minuscules 
+            // ce qui correspond à sa valeur initiale 
+            return this.next_lettre_majuscule_vs_minuscule(a);
+                    
+            }
+        else
+            {
+                if (a.getvaleur() > b.getvaleur()) 
+                {
+                    return this.next_lettre_majuscule_vs_minuscule(a);
+                }
+                else
+                {
+                    return this.next_lettre_majuscule_vs_minuscule(b);
+                }
+            }
     }
   
    

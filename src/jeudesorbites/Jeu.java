@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class Jeu {
 
     private Plateau plateau;
-    
+    private Joueur joueur;
     
     public Jeu() {      
  
@@ -16,19 +16,47 @@ public class Jeu {
         // compteur tour
         // reserve symbole
         // Lettres
-  
-        //
-        
+          
         this.plateau = new Plateau();
-      
+
+        // Lettre[] plateau1 = {
+        //     new LettreMajuscule("DELTA ", 30),  // 0 : Nord
+        //     new LettreMajuscule("SIGMA ", 50),  // 1 : Nord-Ouest
+        //     new LettreMajuscule("SIGMA ", 50),  // 2 : Ouest
+        //     new Lettre("XXXXXXXX", 0),         // 3 : Sud-Ouest
+        //     new Lettre("XXXXXXXX", 0),         // 4 : Sud
+        //     new Lettre("XXXXXXXX", 0),         // 5 : Sud-Est
+        //     new Lettre("XXXXXXXX", 0),         // 6 : Est
+        //     new Lettre("XXXXXXXX", 0)          // 7 : Nord-Est
+        // };
+
+        // // Plateau 2 : Cercle intérieur (4 emplacements)
+        // // 0: N, 1: O, 2: S, 3: E
+        // Lettre[] plateau2 = {
+        //     new Lettre("  gamma ", 3),         // 0 : Nord (aligné avec DELTA 1)
+        //     new Lettre("XXXXXXXX", 0),         // 1 : Ouest (aligné avec SIGMA 3)
+        //     new Lettre("  gamma ", 3),         // 2 : Sud
+        //     new Lettre("XXXXXXXX", 0)          // 3 : Est
+        // };
+
+        // // Le centre
+        // Lettre[] centre = {
+        //     new Lettre("  alpha ", 1)
+        // };
+
+        // this.plateau = new Plateau(plateau1, plateau2, centre);
+
+        this.joueur = new Joueur();
     }
     
     public void next_tour()
     {
         this.plateau.plateau_affichage();
         
-        boolean condition = false;
+        Lettre Lettre_choisi = this.plateau.ChoisitLettreHasard();
+        System.out.println("La lettre tirée au sort est :" + Lettre_choisi);
 
+        boolean condition = false;
         String Choix = "";
 
         while (!condition)
@@ -62,28 +90,26 @@ public class Jeu {
                System.out.println("\nLes seules entrees possibles sont plateau1(1), plateau2(2), centre(3)" );
             }
         }
-
-
-        Lettre Lettre_choisi = this.plateau.ChoisitLettreHasard();
+        
         //il a choisi ce qui a Choix 
         Scanner sc= new Scanner(System.in);
         
         int indice;
 
         if (Choix.equals("1")){
-            System.out.println("Quel Emplacement à vous choisir" );
+            System.out.println("Quel Emplacement à voulez-vous choisir pour :" + Lettre_choisi);
             indice = -1; 
             while (indice<0 || indice>7)
             {
                 System.out.println("Choisir entre 0 et 7 :");
                 indice = Integer.parseInt(sc.nextLine());
             }
-            this.plateau.modifie_une_lettre_plateau1(indice, Lettre_choisi);
+            this.plateau.ajouter_lettre_plateau1_trigonometrique(indice, Lettre_choisi);
         }
 
         //plateau 2
         else if (Choix.equals("2")){
-            System.out.println("Quel Emplacement à vous choisir" );
+            System.out.println("Quel Emplacement à voulez-vous choisir pour :" + Lettre_choisi);
             indice = -1; 
             while (indice<0 || indice>3)
             {
@@ -91,34 +117,55 @@ public class Jeu {
                 indice = Integer.parseInt(sc.nextLine());
             }
             // System.out.println(this.plateau.existe_il_un_emplacement_vide_plateau2());
-            this.plateau.modifie_une_lettre_plateau2(indice, Lettre_choisi);
+            this.plateau.ajouter_lettre_plateau2_trigonometrique(indice, Lettre_choisi);
         }
 
         //centre
-        else if (Choix.equals("3")){  
+        else if (Choix.equals("3")) {
             // System.out.println(this.plateau.existe_il_un_emplacement_vide_centre());
-            this.plateau.modifie_une_lettre_centre(Lettre_choisi);
+            this.plateau.ajouter_lettre_centre_trigonometrique(Lettre_choisi);
         }
         
-        
+        this.plateau.plateau_affichage();
+
+        //réalisation des fusions
+        int score_fusion;
+        int compteur_fusion=1;
+        while (this.plateau.existe_il_une_fusion_ds_tout_le_jeu())
+        {
+            System.out.println("\n================== Fusion n°" + compteur_fusion + "=================="  );
+            score_fusion = this.plateau.faire_une_fusion_ds_le_jeu();
+            this.plateau.plateau_affichage();
+            this.joueur.add_score_fusion(score_fusion);
+            compteur_fusion += 1;
+        }
+
+        // A la fin, on doit incrémenter le compteur de toutes les lettres majuscules
+        // bug possible sur les lettres majsucules heritées de la fusion de lettres
+        this.plateau.incrementer_toutes_majuscules();
     }
     
     public void start()
     {
-//        while (il existe parli l'')
+        int compteur = 1;
 
-        this.next_tour();
-        this.next_tour();
-        this.next_tour();
-        this.next_tour();
-        this.next_tour();
-        this.next_tour();
-        this.next_tour();
-        this.next_tour();
-        
+        // tant qu'il y a un emplacement vide dans le jeu, on contiue à jouer 
+        while (this.plateau.existe_il_un_emplacement_vide_ds_jeu())
+        {
+            System.out.println("\n==============================================");
+            System.out.println("================== Tour n°" + compteur + " ==================");
+            System.out.println("==============================================");
+            System.out.println(this.joueur.toString());
+            this.next_tour();
+
+            compteur += 1;
+        }
+
+        System.out.println("\nLe score final est de :");
+        System.out.println(this.joueur.toString());
     }
    
     
    
 }
-// Random(class) random(objet) = new Random()(constructeur);
+

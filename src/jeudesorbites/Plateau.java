@@ -13,33 +13,39 @@ public class Plateau {
     private Lettre[] centre = new Lettre[1];
     private TableauLettresGrecs tableau_lettre_grec;
 
-    public Plateau() { // constructeurs
+    public Plateau() { // constructeur
         this.tableau_lettre_grec = new TableauLettresGrecs();
-        
-        Lettre lettre_zero = this.tableau_lettre_grec.getzero();
-        
-        for (int i = 0; i < this.plateau1.length; i++) {// Nombre d element list
-            this.plateau1[i]= lettre_zero;
-        }
-        
-        for (int i = 0; i < this.plateau2.length; i++) {
-            this.plateau2[i]= lettre_zero;
-        }
-        
-        this.centre[0] = lettre_zero;
-        
-        this.AjouterPremiereLettre();
-        
-        //Class_name name_variable = new Class_name(arg1, arg2, ....);
-        
 
+        Lettre lettre_zero = this.tableau_lettre_grec.getzero();
+
+        for (int i = 0; i < this.plateau1.length; i++) {// Nombre d element list
+            this.plateau1[i] = lettre_zero;
+        }
+
+        for (int i = 0; i < this.plateau2.length; i++) {
+            this.plateau2[i] = lettre_zero;
+        }
+
+        this.centre[0] = lettre_zero;
+
+        this.AjouterPremiereLettre();
+
+        //Class_name name_variable = new Class_name(arg1, arg2, ....);
+    }
+    
+    public Plateau(Lettre[] plateau1, Lettre[] plateau2, Lettre[] centre) { // constructeur initialisé
+        this.tableau_lettre_grec = new TableauLettresGrecs();
+
+        this.plateau1 = plateau1;
+        this.plateau2 = plateau2;
+        this.centre = centre;
     }
       
     public final void AjouterPremiereLettre(){
         Random generateur =new Random();
         int nombreAlea = generateur.nextInt(13);
         
-        Lettre alpha = this.tableau_lettre_grec.getalphabetMin(0);
+        Lettre alpha = this.tableau_lettre_grec.getalphabetMinuscule(0);
         //méthode pr acceder a l'instance, instance Class TableauLettresGrecs: this.tableau_lettre_grec
         
         if (nombreAlea<=7){
@@ -61,19 +67,19 @@ public class Plateau {
         int choixLettre = rand.nextInt(5);
                 
         if (choixLettre==0){
-            return this.tableau_lettre_grec.getalphabetMin(0);
+            return this.tableau_lettre_grec.getalphabetMinuscule(0);
         }
         else if(choixLettre==1){
-            return this.tableau_lettre_grec.getalphabetMin(1);
+            return this.tableau_lettre_grec.getalphabetMinuscule(1);
         }
         else if (choixLettre==2){
-            return this.tableau_lettre_grec.getalphabetMaj(0);
+            return this.tableau_lettre_grec.getalphabetMajuscule(0,-1);
         }
         else if (choixLettre==3){
-            return this.tableau_lettre_grec.getalphabetMaj(1);
+            return this.tableau_lettre_grec.getalphabetMajuscule(1,-1);
         }
         else {
-            return this.tableau_lettre_grec.getalphabetMaj(2);
+            return this.tableau_lettre_grec.getalphabetMajuscule(2,-1);
         }
         
     }
@@ -82,7 +88,6 @@ public class Plateau {
         int n=0;
         while (n<plateau1.length){
             if (plateau1[n].est_vide()){
-                System.out.println("Le plateau1 a au moins un emplacement vide");
                 return true;
             }
             n++;
@@ -95,7 +100,6 @@ public class Plateau {
         int n=0;
         while (n<plateau2.length){
             if (plateau2[n].est_vide()){
-                System.out.println("Le plateau2 a au moins un emplacement vide");
                 return true;
             }
             n++;
@@ -104,23 +108,186 @@ public class Plateau {
     }
     
     //centre
-    public boolean existe_il_un_emplacement_vide_centre(){
-           return centre[0].est_vide();
+    public boolean existe_il_un_emplacement_vide_centre() {
+        return centre[0].est_vide();
     }
 
+    public boolean existe_il_un_emplacement_vide_ds_jeu() {
+        return this.existe_il_un_emplacement_vide_plateau1() || this.existe_il_un_emplacement_vide_plateau2()
+                || this.existe_il_un_emplacement_vide_centre();
+    }
+
+    public void ajouter_lettre_plateau1_trigonometrique(int indice, Lettre Lettre_choisi)
+    {
+        Lettre Lettre_stockage_inter;
+
+        while (!Lettre_choisi.est_vide()) {
+            Lettre_stockage_inter = this.plateau1[indice];
+            this.plateau1[indice] = Lettre_choisi;
+
+            Lettre_choisi = Lettre_stockage_inter;
+
+            indice = (indice + 1) % this.plateau1.length;
+        }
+    }
     
-    public void modifie_une_lettre_plateau1(int n, Lettre Lettre_choisi ) {
-        this.plateau1[n] = Lettre_choisi;
+    public void ajouter_lettre_plateau2_trigonometrique(int indice, Lettre Lettre_choisi)
+    {
+        Lettre Lettre_stockage_inter;
+
+        while (!Lettre_choisi.est_vide()) {
+            Lettre_stockage_inter = this.plateau2[indice];
+            this.plateau2[indice] = Lettre_choisi;
+
+            Lettre_choisi = Lettre_stockage_inter;
+
+            indice = (indice + 1) % this.plateau2.length;
+        }
+    }
+    
+    public void ajouter_lettre_centre_trigonometrique(Lettre Lettre_choisi)
+    {
+        centre[0] = Lettre_choisi;
     }
 
-    public void modifie_une_lettre_plateau2(int n, Lettre Lettre_choisi ) {
-        this.plateau2[n] = Lettre_choisi;
-    }
+    public boolean existe_il_une_fusion_ds_tout_le_jeu()
+    {
+        // on va devoir checker si une lettre est egal à celle qui suit
+        //  en excluant le cas ou les lettres sont nulles
 
-    public void modifie_une_lettre_centre(Lettre Lettre_choisi ) {
-        this.centre[0] = Lettre_choisi;
+        int indice_next;
+
+        for (int i = 0; i < this.plateau1.length; i++) {
+            // on teste avec le suivant (y compris pour le dernier element )
+            indice_next = (i + 1) % this.plateau1.length;
+
+            // lettres qui se suivent dans plateau1
+            if (this.plateau1[i].est_fusionable(this.plateau1[indice_next])) {
+                return true;
+            }
+
+            // les ponts entre plateau1 et plateau2 correspondent
+            //  aux éléments indices pairs sur plateau1
+            if (i % 2 == 0) {
+                if (this.plateau1[i].est_fusionable(this.plateau2[i / 2])) {
+                    return true;
+                }
+            }
+        }
+
+        for (int i = 0; i < this.plateau2.length; i++) {
+            indice_next = (i + 1) % this.plateau2.length;
+
+            // lettres qui se suivent dans plateau2
+            if (this.plateau2[i].est_fusionable(this.plateau2[indice_next])) {
+                return true;
+            }
+
+            // les ponts entre plateau2 et le centre
+            if (this.centre[0].est_fusionable(this.plateau2[i])) {
+                return true;
+            }
+        }
+
+        // si on arrive, ici aucune fusions n'existent
+        return false;
     }
-        
+    
+    public int faire_une_fusion_ds_le_jeu()
+    {
+        // on fait la fusion est on renvoie le score de celle-ci
+
+        int fusion_score = 0;
+        int indice_next;
+        boolean symbol_plus_noir = false;
+        Lettre lettre_zero = this.tableau_lettre_grec.getzero();
+
+        for (int i = 0; i < this.plateau1.length; i++) {
+            // on teste avec le suivant (y compris pour le dernier element )
+            indice_next = (i + 1) % this.plateau1.length;
+
+            // lettres qui se suivent dans plateau1
+            if (this.plateau1[i].est_fusionable(this.plateau1[indice_next])) {
+                // on calcule score de fusion entre les deux lettres
+                fusion_score = this.plateau1[i].getvaleur() + this.plateau1[indice_next].getvaleur();
+                // on genere la lettre fusionne
+                Lettre fusion = this.tableau_lettre_grec.fusion(this.plateau1[i], this.plateau1[indice_next],
+                        symbol_plus_noir);
+                // on remplace l'un des emplacement par la fusion des lettres et on libere l autre
+                this.plateau1[i] = fusion;
+                this.plateau1[indice_next] = lettre_zero;
+                return fusion_score;
+            }
+
+            // les ponts entre plateau1 et plateau2 correspondent
+            //  aux éléments indices pairs sur plateau1
+            if (i % 2 == 0) {
+                if (this.plateau1[i].est_fusionable(this.plateau2[i / 2])) {
+                    fusion_score = this.plateau1[i].getvaleur() + this.plateau2[i / 2].getvaleur();
+                    Lettre fusion = this.tableau_lettre_grec.fusion(this.plateau1[i], this.plateau2[i / 2],
+                            symbol_plus_noir);
+                    // on tente de rapprocher la fusion au centre 
+                    this.plateau1[i] = lettre_zero;
+                    this.plateau2[i / 2] = fusion;
+                    return fusion_score;
+                }
+            }
+        }
+
+        for (int i = 0; i < this.plateau2.length; i++) {
+            indice_next = (i + 1) % this.plateau2.length;
+
+            // lettres qui se suivent dans plateau2
+            if (this.plateau2[i].est_fusionable(this.plateau2[indice_next])) {
+                fusion_score = this.plateau2[i].getvaleur() + this.plateau2[indice_next].getvaleur();
+                Lettre fusion = this.tableau_lettre_grec.fusion(this.plateau2[i], this.plateau2[indice_next],
+                        symbol_plus_noir);
+                this.plateau2[i] = fusion;
+                this.plateau2[indice_next] = lettre_zero;
+                return fusion_score;
+            }
+
+            // les ponts entre plateau2 et le centre
+            if (this.centre[0].est_fusionable(this.plateau2[i])) {
+                fusion_score = this.centre[0].getvaleur() + this.plateau2[i].getvaleur();
+                Lettre fusion = this.tableau_lettre_grec.fusion(this.centre[0], this.plateau2[i], symbol_plus_noir);
+                this.centre[0] = fusion;
+                this.plateau2[i] = lettre_zero;
+                return fusion_score;
+            }
+        }
+
+        // on ne devrait jamais arriver ici, donc on renvoie un score eleve pour signifier un bug 
+        fusion_score = 1000000;
+        return fusion_score;
+    }
+    
+
+    public void incrementer_toutes_majuscules()
+    {
+        for (int i = 0; i < this.plateau1.length; i++) {
+
+            // si c'est une majuscule on incrémente
+            if (!this.plateau1[i].est_ce_une_minuscule()) {
+                LettreMajuscule lettremaj = (LettreMajuscule) this.plateau1[i];
+                lettremaj.Increment_Temps_presence();
+            }
+        }
+
+        for (int i = 0; i < this.plateau2.length; i++) {
+            // si c'est une majuscule on incrémente
+            if (!this.plateau2[i].est_ce_une_minuscule()) {
+                LettreMajuscule lettremaj = (LettreMajuscule) this.plateau2[i];
+                lettremaj.Increment_Temps_presence();
+            }
+        }
+    
+        if (!this.centre[0].est_ce_une_minuscule())
+            {
+                LettreMajuscule lettremaj = (LettreMajuscule) this.centre[0];
+                lettremaj.Increment_Temps_presence();
+            }    
+    }
          
     public void plateau_affichage() {
         PrintWriter printWriter = new PrintWriter(System.out, true);
