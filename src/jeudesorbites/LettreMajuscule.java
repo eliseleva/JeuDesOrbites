@@ -7,13 +7,13 @@ package jeudesorbites;
 public class LettreMajuscule extends Lettre{
     private int TempPrecense;
 
-    public LettreMajuscule(String nom, int score) {
-        super(nom, score);
+    public LettreMajuscule(String nom, int valeur) {
+        super(nom, valeur);
         this.TempPrecense = 0;
     }
 
-    public LettreMajuscule(String nom, int score, int presence) {
-        super(nom, score);
+    public LettreMajuscule(String nom, int valeur, int presence) {
+        super(nom, valeur);
         this.TempPrecense = presence;
     }
     
@@ -44,7 +44,16 @@ public class LettreMajuscule extends Lettre{
     public int getvaleur() {
         // ajoute Override car on est dans la classe fille et on
         //redefini/surcharge une methode qui est presente dans la classe mere
-        return super.getvaleur() + this.TempPrecense - (this.TempPrecense % 10); // reste division euclidienne
+        if  (this.TempPrecense>=0)
+        {
+            return super.getvaleur() + this.TempPrecense - (this.TempPrecense % 10);
+        }
+        else
+        {
+            // cas particulier quand le compteur de temps est à -1
+            //  (car super.getvaleur() + (-1) - (-1%10) = super.getvaleur() - 10 )
+            return super.getvaleur();
+        }
 
     }
     

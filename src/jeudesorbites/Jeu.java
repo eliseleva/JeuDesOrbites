@@ -126,6 +126,7 @@ public class Jeu {
             this.plateau.ajouter_lettre_centre_trigonometrique(Lettre_choisi);
         }
         
+        System.out.println("========== Le résultat de votre placement de:" +Lettre_choisi + " ========");
         this.plateau.plateau_affichage();
 
         //réalisation des fusions

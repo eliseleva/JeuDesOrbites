@@ -69,10 +69,14 @@ public class Plateau {
         if (choixLettre==0){
             return this.tableau_lettre_grec.getalphabetMinuscule(0);
         }
-        else if(choixLettre==1){
+        else if (choixLettre == 1) {
             return this.tableau_lettre_grec.getalphabetMinuscule(1);
         }
-        else if (choixLettre==2){
+        
+        // cas super particulier pour le compteur 
+        // vu que le compteur de toutes les lettres majsucules est incrémenté à la fin du tour
+        // on met -1, pour être sur qu'à la fin du tour le compteur des lettres qui viennent d'être rajouté est à 0
+        else if (choixLettre == 2) {
             return this.tableau_lettre_grec.getalphabetMajuscule(0,-1);
         }
         else if (choixLettre==3){

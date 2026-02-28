@@ -23,14 +23,14 @@ public class TableauLettresGrecs {
         this.alphabetMin[7]= new Lettre("  theta " ,8);
         this.alphabetMin[8]= new Lettre("  iota  " ,9);
         this.alphabetMin[9]= new Lettre("  kappa " ,10);
-        this.alphabetMin[10]= new Lettre(" lambda " , 11); //
+        this.alphabetMin[10]= new Lettre(" lambda " , 11);
         this.alphabetMin[11]= new Lettre("   mu   " , 12);
         this.alphabetMin[12]= new Lettre("   nu   " , 13);
         this.alphabetMin[13]= new Lettre("   xi   " , 14);
         this.alphabetMin[14]= new Lettre(" omicron" , 15);
         this.alphabetMin[15]= new Lettre("   pi   " , 16);
         this.alphabetMin[16]= new Lettre("   rho  " , 17);
-        this.alphabetMin[17]= new Lettre("  sigma " , 18);//
+        this.alphabetMin[17]= new Lettre("  sigma " , 18);
         this.alphabetMin[18]= new Lettre("  tau   " , 19);
         this.alphabetMin[19]= new Lettre(" upsilon" , 20);
         this.alphabetMin[20]= new Lettre("  phi   " , 21);
@@ -59,7 +59,7 @@ public class TableauLettresGrecs {
     }
     
     public Lettre getzero() {
-        return new Lettre(this.zero_letter.getnom(), this.zero_letter.getvaleur());
+        return new Lettre(this.zero_letter.getnom(), this.zero_letter.getvaleur()); // copies indépendnate
     }
     
     public Lettre next_lettre_majuscule_vs_minuscule(Lettre a)
@@ -70,6 +70,10 @@ public class TableauLettresGrecs {
         }
         else
         {
+            // cas ultra particulier, le compteur de temps de présence est à -1
+            // car on vient à l'instant de rajouter la lettre dans le tour
+            // or à la fin du tour on incrémente les compteurs de toutes les les majuscules
+            // donc pour s'assurer que le compteur tombe sur 0 à la fin du tour, on met -1
             return this.getalphabetMajuscule(a.get_next_indice(), -1);
         }
     }
@@ -77,9 +81,13 @@ public class TableauLettresGrecs {
     public Lettre fusion(Lettre a, Lettre b, boolean symbol_plus_noir)
     {
 
-        // cas particulier si on à la dernière lettre
         if (!symbol_plus_noir)
         {
+            // le cas particulier si on à la dernière lettre (et donc on n'a 
+            // pas de lettre suivant) [pour omega minsucule et SIGMA majsucule] est traité par 
+            // la classe lettre avec la méthode est_fusionable
+            // pour s'assurer que l'on ne tombe jamais dans ce cas ici (qui crasherai)
+
             // Quand on fusionne deux lettres identiques, on renvoie la lettre suivante dans le tableau
             // des majuscules ou des minuscules 
             // ce qui correspond à sa valeur initiale 
@@ -87,16 +95,18 @@ public class TableauLettresGrecs {
                     
             }
         else
+        {
+            // si on le symbole + noir, on peut fusionner des lettres diffèrentes 
+            // et récupérer la suivante de celle qui a le plus de valeur
+            if (a.getvaleur() > b.getvaleur()) 
             {
-                if (a.getvaleur() > b.getvaleur()) 
-                {
-                    return this.next_lettre_majuscule_vs_minuscule(a);
-                }
-                else
-                {
-                    return this.next_lettre_majuscule_vs_minuscule(b);
-                }
+                return this.next_lettre_majuscule_vs_minuscule(a);
             }
+            else
+            {
+                return this.next_lettre_majuscule_vs_minuscule(b);
+            }
+        }
     }
   
    
