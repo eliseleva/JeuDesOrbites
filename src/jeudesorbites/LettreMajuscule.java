@@ -52,6 +52,7 @@ public class LettreMajuscule extends Lettre{
         {
             // cas particulier quand le compteur de temps est à -1
             //  (car super.getvaleur() + (-1) - (-1%10) = super.getvaleur() - 10 )
+            // Donc this.TempPrecense - (this.TempPrecense % 10) renverrai -10 au lieu de 0
             return super.getvaleur();
         }
 
