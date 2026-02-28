@@ -267,7 +267,7 @@ public class Plateau {
     }
     
 
-    public void incrementer_toutes_majuscules()
+    public void incrementer_tous_les_compteurs_temps_majuscules()
     {
         for (int i = 0; i < this.plateau1.length; i++) {
 

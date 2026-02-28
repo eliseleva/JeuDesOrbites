@@ -18,34 +18,6 @@ public class Jeu {
         // Lettres
           
         this.plateau = new Plateau();
-
-        // Lettre[] plateau1 = {
-        //     new LettreMajuscule("DELTA ", 30),  // 0 : Nord
-        //     new LettreMajuscule("SIGMA ", 50),  // 1 : Nord-Ouest
-        //     new LettreMajuscule("SIGMA ", 50),  // 2 : Ouest
-        //     new Lettre("XXXXXXXX", 0),         // 3 : Sud-Ouest
-        //     new Lettre("XXXXXXXX", 0),         // 4 : Sud
-        //     new Lettre("XXXXXXXX", 0),         // 5 : Sud-Est
-        //     new Lettre("XXXXXXXX", 0),         // 6 : Est
-        //     new Lettre("XXXXXXXX", 0)          // 7 : Nord-Est
-        // };
-
-        // // Plateau 2 : Cercle intérieur (4 emplacements)
-        // // 0: N, 1: O, 2: S, 3: E
-        // Lettre[] plateau2 = {
-        //     new Lettre("  gamma ", 3),         // 0 : Nord (aligné avec DELTA 1)
-        //     new Lettre("XXXXXXXX", 0),         // 1 : Ouest (aligné avec SIGMA 3)
-        //     new Lettre("  gamma ", 3),         // 2 : Sud
-        //     new Lettre("XXXXXXXX", 0)          // 3 : Est
-        // };
-
-        // // Le centre
-        // Lettre[] centre = {
-        //     new Lettre("  alpha ", 1)
-        // };
-
-        // this.plateau = new Plateau(plateau1, plateau2, centre);
-
         this.joueur = new Joueur();
     }
     
@@ -142,8 +114,10 @@ public class Jeu {
         }
 
         // A la fin, on doit incrémenter le compteur de toutes les lettres majuscules
-        // bug possible sur les lettres majsucules heritées de la fusion de lettres
-        this.plateau.incrementer_toutes_majuscules();
+        // bug possible sur les lettres majsucules heritées de la fusion de lettres ou celle
+        //  qui vient d'être chsoisie et posée dans le jeu (Lettre_choisi)
+        // (mais on a mis -1 comme compteur de temps pour cette raison sur ces lettres)
+        this.plateau.incrementer_tous_les_compteurs_temps_majuscules();
     }
     
     public void start()
