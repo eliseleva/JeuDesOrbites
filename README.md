@@ -10,7 +10,7 @@ javac -d .\build\classes\jeudesorbites\ .\src\jeudesorbites\*.java
 
 Execution
 ```cmd
-java -cp .\build\classes\ jeudesorbites.JeuDesOrbites
+java -cp .\build\classes jeudesorbites.main
 ```
 
 ## Pour les caractères spéciaux sous Windows
