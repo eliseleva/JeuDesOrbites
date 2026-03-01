@@ -61,32 +61,148 @@ public class Plateau {
     }
     
     public Lettre ChoisitLettreHasard() {
-        
-        
+
         Random rand = new Random();
         int choixLettre = rand.nextInt(5);
-                
-        if (choixLettre==0){
+
+        if (choixLettre == 0) {
             return this.tableau_lettre_grec.getalphabetMinuscule(0);
-        }
-        else if (choixLettre == 1) {
+        } else if (choixLettre == 1) {
             return this.tableau_lettre_grec.getalphabetMinuscule(1);
         }
-        
+
         // cas super particulier pour le compteur 
         // vu que le compteur de toutes les lettres majsucules est incrémenté à la fin du tour
         // on met -1, pour être sur qu'à la fin du tour le compteur des lettres qui viennent d'être rajouté est à 0
         else if (choixLettre == 2) {
-            return this.tableau_lettre_grec.getalphabetMajuscule(0,-1);
+            return this.tableau_lettre_grec.getalphabetMajuscule(0, -1);
+        } else if (choixLettre == 3) {
+            return this.tableau_lettre_grec.getalphabetMajuscule(1, -1);
+        } else {
+            return this.tableau_lettre_grec.getalphabetMajuscule(2, -1);
         }
-        else if (choixLettre==3){
-            return this.tableau_lettre_grec.getalphabetMajuscule(1,-1);
+
+    }
+
+    public Lettre renvoie_lettre_plateau(int indice, String Choix_plateau) {
+        // attention ceci n'est pas une copie 
+        switch (Choix_plateau) {
+            case "plateau1":
+                return this.plateau1[indice];
+            case "plateau2":
+                return this.plateau2[indice];
+            case "centre":
+                return this.centre[indice];
+            default:
+                throw new IllegalArgumentException("Mauvais symbol");
         }
+    }
+
+    public void modife_lettre_plateau(int indice, String Choix_plateau, Lettre lettre) {
+        // attention ceci n'est pas une copie 
+        switch (Choix_plateau) {
+            case "plateau1":
+                this.plateau1[indice] = lettre;
+                break;
+            case "plateau2":
+                this.plateau2[indice] = lettre;
+                break;
+            case "centre":
+                this.centre[indice] = lettre;
+                break;
+            default:
+                throw new IllegalArgumentException("Mauvais symbol");
+        }
+    }
+
+    public void mettre_emplacement_vide(int indice, String Choix_plateau){
+        Lettre lettre_zero = this.tableau_lettre_grec.getzero();
+
+        this.modife_lettre_plateau(indice, Choix_plateau, lettre_zero);
+    }
+
+    public boolean est_ce_adjacent(int indice1, String Choix_plateau1, int indice2, String Choix_plateau2) {
+
+        // si les deux lettres sont sur plateau1, elles sont adjacentes si la distance 
+        // absolue des indices est de 1(cas normal) ou de 7(cas ou on referme le cercle) 
+        if (Choix_plateau1.equals("plateau1") && Choix_plateau2.equals("plateau1")) {
+            int diff = Math.abs(indice1 - indice2);
+            return  diff== 1 || diff == 7;
+        }
+
+        // pareil pour plateau2 sauf que le cas ou on referme le cercle est de 3
+        else if (Choix_plateau1.equals("plateau2") && Choix_plateau2.equals("plateau2")) {
+            int diff = Math.abs(indice1 - indice2);
+            return diff == 1 || diff == 3;
+        }
+
+        // ona  le meme centre deux fois, on envoie false
+        else if (Choix_plateau1.equals("centre") && Choix_plateau2.equals("centre")) {
+            return false;
+        }
+
+        // on a plateau1 pour le 1er et plateau2 poiur le 2eme, alors on teste si les indices ont un facteur 2
+        else if (Choix_plateau1.equals("plateau1") && Choix_plateau2.equals("plateau2")) {
+            return 2*indice2 == indice1;
+        }
+
+        // on a plateau2 pour le 1er et plateau1 poiur le 2eme, alors on teste si les indices ont un facteur 2
+        else if (Choix_plateau1.equals("plateau2") && Choix_plateau2.equals("plateau1")) {
+            return 2*indice1 == indice2;
+        }
+        
+        // on a plateau1 pour le 1er et centre pour le 2eme ou inversement on renvoie false
+        else if ((Choix_plateau1.equals("plateau1") && Choix_plateau2.equals("centre"))
+                || (Choix_plateau1.equals("centre") && Choix_plateau2.equals("plateau1"))) {
+            return false;
+        }
+
+        // sinon on se trouve dans le cas où on a plateau2 et le centre, donc c'est forcement adjacent
         else {
-            return this.tableau_lettre_grec.getalphabetMajuscule(2,-1);
+            return true;
         }
         
     }
+
+    public boolean est_ce_fusionnable(int indice1, String Choix_plateau1, int indice2, String Choix_plateau2,
+            boolean symbol_plus_noir) {
+
+        // attntion lettre_1 et lettre_2 ne sont pas des copies indépendates
+        Lettre lettre_1 = this.renvoie_lettre_plateau(indice1, Choix_plateau1);
+        Lettre lettre_2 = this.renvoie_lettre_plateau(indice2, Choix_plateau2);
+
+        if (symbol_plus_noir) {
+            // on s'assure que les conditions de fusion dans le cadre symbol noir sont réunies( lettres potentiellment différentes)
+            //  et les lettres doivent etre adjacentes
+            return lettre_1.est_fusionable(lettre_2, symbol_plus_noir)
+                    && this.est_ce_adjacent(indice1, Choix_plateau1, indice2, Choix_plateau2);
+        } 
+        else {
+            // on s'assure que les conditions de fusion classique sont réunies et qu'on n'utilise pas deux fois la même lettre
+            return lettre_1.est_fusionable(lettre_2, symbol_plus_noir)
+                    && (indice1 != indice2 || Choix_plateau1 != Choix_plateau2);
+        }
+    }
+        
+
+    public int fusion_lettre_symbole(int indice1, String Choix_plateau1, int indice2, String Choix_plateau2, boolean symbol_plus_noir) {
+        // attntion fusion doit être une copie
+        Lettre lettre1 = this.renvoie_lettre_plateau(indice1, Choix_plateau1);
+        Lettre lettre2 = this.renvoie_lettre_plateau(indice2, Choix_plateau2);
+
+        Lettre fusion = this.tableau_lettre_grec.fusion(lettre1, lettre2, symbol_plus_noir);
+        
+        int fusion_score = lettre1.getvaleur() + lettre2.getvaleur();
+
+        this.modife_lettre_plateau(indice1, Choix_plateau1, fusion);
+
+        Lettre lettre_zero = this.tableau_lettre_grec.getzero();
+        this.modife_lettre_plateau(indice2, Choix_plateau2, lettre_zero);
+
+        return fusion_score;
+        }
+    
+    
     //Plateau 1
     public boolean existe_il_un_emplacement_vide_plateau1(){
         int n=0;
@@ -166,14 +282,14 @@ public class Plateau {
             indice_next = (i + 1) % this.plateau1.length;
 
             // lettres qui se suivent dans plateau1
-            if (this.plateau1[i].est_fusionable(this.plateau1[indice_next])) {
+            if (this.plateau1[i].est_fusionable(this.plateau1[indice_next], false)) {
                 return true;
             }
 
             // les ponts entre plateau1 et plateau2 correspondent
             //  aux éléments indices pairs sur plateau1
             if (i % 2 == 0) {
-                if (this.plateau1[i].est_fusionable(this.plateau2[i / 2])) {
+                if (this.plateau1[i].est_fusionable(this.plateau2[i / 2], false)) {
                     return true;
                 }
             }
@@ -183,12 +299,12 @@ public class Plateau {
             indice_next = (i + 1) % this.plateau2.length;
 
             // lettres qui se suivent dans plateau2
-            if (this.plateau2[i].est_fusionable(this.plateau2[indice_next])) {
+            if (this.plateau2[i].est_fusionable(this.plateau2[indice_next], false)) {
                 return true;
             }
 
             // les ponts entre plateau2 et le centre
-            if (this.centre[0].est_fusionable(this.plateau2[i])) {
+            if (this.centre[0].est_fusionable(this.plateau2[i], false)) {
                 return true;
             }
         }
@@ -211,7 +327,7 @@ public class Plateau {
             indice_next = (i + 1) % this.plateau1.length;
 
             // lettres qui se suivent dans plateau1
-            if (this.plateau1[i].est_fusionable(this.plateau1[indice_next])) {
+            if (this.plateau1[i].est_fusionable(this.plateau1[indice_next], false)) {
                 // on calcule score de fusion entre les deux lettres
                 fusion_score = this.plateau1[i].getvaleur() + this.plateau1[indice_next].getvaleur();
                 // on genere la lettre fusionne
@@ -226,7 +342,7 @@ public class Plateau {
             // les ponts entre plateau1 et plateau2 correspondent
             //  aux éléments indices pairs sur plateau1
             if (i % 2 == 0) {
-                if (this.plateau1[i].est_fusionable(this.plateau2[i / 2])) {
+                if (this.plateau1[i].est_fusionable(this.plateau2[i / 2], false)) {
                     fusion_score = this.plateau1[i].getvaleur() + this.plateau2[i / 2].getvaleur();
                     Lettre fusion = this.tableau_lettre_grec.fusion(this.plateau1[i], this.plateau2[i / 2],
                             symbol_plus_noir);
@@ -242,7 +358,7 @@ public class Plateau {
             indice_next = (i + 1) % this.plateau2.length;
 
             // lettres qui se suivent dans plateau2
-            if (this.plateau2[i].est_fusionable(this.plateau2[indice_next])) {
+            if (this.plateau2[i].est_fusionable(this.plateau2[indice_next], false)) {
                 fusion_score = this.plateau2[i].getvaleur() + this.plateau2[indice_next].getvaleur();
                 Lettre fusion = this.tableau_lettre_grec.fusion(this.plateau2[i], this.plateau2[indice_next],
                         symbol_plus_noir);
@@ -252,7 +368,7 @@ public class Plateau {
             }
 
             // les ponts entre plateau2 et le centre
-            if (this.centre[0].est_fusionable(this.plateau2[i])) {
+            if (this.centre[0].est_fusionable(this.plateau2[i], false)) {
                 fusion_score = this.centre[0].getvaleur() + this.plateau2[i].getvaleur();
                 Lettre fusion = this.tableau_lettre_grec.fusion(this.centre[0], this.plateau2[i], symbol_plus_noir);
                 this.centre[0] = fusion;
@@ -323,7 +439,7 @@ public class Plateau {
         text += "\n      /          /          " + p2_0 + "        \\            \\      |";
         text += "\n     |           |             |             |           |      |";
         text += "\n     |           |             |             |           |      |";
-        text += "\n " + p1_2 + " -- " + p2_1 + "  --  " + c + "  --  " + p2_3 + "  --  " + p1_6 + " |";
+        text += "\n " + p1_2 + " -- " + p2_1 + "  --  " + c + "  -- " + p2_3 + "  --  " + p1_6 + "  |";
 		text += "\n     |           |             |             |           |      |";
 		text += "\n     |           |             |             |           |      |";
 		text += "\n      \\          \\______    " + p2_2 + "    _____/          /       |";
