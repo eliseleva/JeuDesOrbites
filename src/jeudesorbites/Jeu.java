@@ -17,8 +17,8 @@ public class Jeu {
     private int next_rouge_indice;
     private int next_noir_indice;
 
-    public Jeu() {      
- 
+    public Jeu() {
+
         // Joueur 
         // compteur tour
         // reserve symbole
@@ -35,6 +35,12 @@ public class Jeu {
         this.next_noir_indice = generateur.nextInt(6) + 10; //entre 10 et 15
     }
        
+    public void message_erreur(String message_erreur) {
+        System.out.println("\nERROR : " + message_erreur);
+        // on attend une entrée de l'utlisateur
+        this.scanner.nextLine().trim();
+    }
+
     public String Choisir_un_des_3_plateau() {
         boolean condition = false;
         String Choix;
@@ -66,12 +72,6 @@ public class Jeu {
 
         }
         return res;
-    }
-
-    public void message_erreur(String message_erreur) {
-        System.out.println("\nERROR : " + message_erreur);
-        // on attend une entrée de l'utlisateur
-        this.scanner.nextLine().trim();
     }
 
     public int choisir_indice(int max) {
