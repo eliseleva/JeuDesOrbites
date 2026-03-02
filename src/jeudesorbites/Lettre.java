@@ -1,6 +1,8 @@
 
 package jeudesorbites;
 
+import java.util.Objects;
+
 /**
  *
  * @author elise_admin
@@ -38,13 +40,37 @@ public class Lettre {
 
         if (symbole_plus_noir) {
             // on n'a pas de condition sur l'égalité des lettres avec noir+
-            return !this.est_vide() & !x.est_vide() & this.pas_egal_omega_ou_sigma_maj() & x.pas_egal_omega_ou_sigma_maj();
+            return !this.est_vide() & !x.est_vide() & this.pas_egal_omega_ou_sigma_maj()
+                    & x.pas_egal_omega_ou_sigma_maj();
         } else {
             // Sinon on teste si les deux sont egales et l'une d'entre elle n'est pas vide
-            return this.nom.equals(x.nom) & !this.est_vide() & this.pas_egal_omega_ou_sigma_maj() & x.pas_egal_omega_ou_sigma_maj();
+            return this.nom.equals(x.nom) & !this.est_vide() & this.pas_egal_omega_ou_sigma_maj()
+                    & x.pas_egal_omega_ou_sigma_maj();
         }
     }
+
+    // pour le comptage des doublons 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+
+        // 'instanceof' accepte les sous-classes
+        if (!(obj instanceof Lettre))
+            return false;
+
+        Lettre other = (Lettre) obj;
+        return Objects.equals(this.nom, other.nom);
+    }
+
+    @Override
+    public int hashCode() {
+        // Crucial pour que la HashMap trouve les lettres identiques
+        return Objects.hash(this.nom);
+    }
     
+    
+
     public boolean pas_egal_omega_ou_sigma_maj()
     {
         return this.valeur != 24 && this.valeur != 50;

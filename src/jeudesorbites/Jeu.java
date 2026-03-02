@@ -182,27 +182,44 @@ public class Jeu {
             switch (Choix) {
                 case "0":
 
-                    // BUG ICI a implementer un truc qui teste s'il existe deux lettres identique dans le jeu
+                    // Pour utiliser ce symbole, il doit y avoir au moins deux lettres identiques dans le jeu (non nulles, ni omega, ni sigma majuscule)
                     condition = this.joueur.can_use_symbol("symbole_rouge");
                     if (!condition) {
                         this.message_erreur("[+rouge n'est pas utilisable à ce tour]");
                     }
+                    else{
+                        condition &= this.plateau.existe_il_des_doublons_ds_tout_le_jeu();
+                        if (!condition) {
+                            this.message_erreur("Il n'y a pas de lettre identiques(excluant SIGMA, et omega) dans le jeu, +rouge n'est pas utilisable");
+                        }
+                        }
                     break;
 
                 case "1":
-                    // BUG ICI a implementer un truc qui teste s'il existe deux lettres adjacentes
-                    condition = this.joueur.can_use_symbol("symbole_noir");
+                    // Pour utiliser ce symbole, il doit y avoir au moins deux letres adjacentes (non nulles, ni omega, ni sigma majuscule)
+                    condition = this.joueur.can_use_symbol("symbole_noir"); 
                     if (!condition) {
                         this.message_erreur("[+noir n'est pas utilisable à ce tour]");
+                    }
+                    else {
+                        condition &= this.plateau.existe_il_une_fusion_ds_tout_le_jeu(true);
+                        if (!condition) {
+                            this.message_erreur("Il n'y a pas de lettre adjacentes(excluant SIGMA, et omega) dans le jeu, +noir n'est pas utilisable");
+                        }
                     }
                     break;
 
                 case "2":
                     // Pour pouvoir utiliser ce symbole, il doit y avoir au moins un emplacement libre dans le jeu
-                    condition = this.joueur.can_use_symbol("symbole_vert")
-                            && this.plateau.existe_il_un_emplacement_vide_ds_jeu();
+                    condition = this.joueur.can_use_symbol("symbole_vert");
                     if (!condition) {
                         this.message_erreur("[+vert n'est pas utilisable à ce tour]");
+                    }
+                    else {
+                        condition &= this.plateau.existe_il_un_emplacement_vide_ds_jeu();
+                        if (!condition) {
+                            this.message_erreur("Il n'y a pas d'emplacements vides dans le jeu, +vert n'est pas utilisable");
+                        }
                     }
                     break;
 
@@ -342,7 +359,7 @@ public class Jeu {
         //realisation des fusions
         int fusion_score;
         int compteur_fusion = 1;
-        while (this.plateau.existe_il_une_fusion_ds_tout_le_jeu()) {
+        while (this.plateau.existe_il_une_fusion_ds_tout_le_jeu(false)) {
 
             fusion_score = this.plateau.faire_une_fusion_ds_le_jeu();
             System.out.println(
@@ -418,13 +435,16 @@ public class Jeu {
         //  qui vient d'être chsoisie et posee dans le jeu (Lettre_choisi)
         // (mais on a mis -1 comme compteur de temps pour cette raison sur ces lettres)
         this.plateau.incrementer_tous_les_compteurs_temps_majuscules();
+
     }
 
     
     public void start()
     {
         System.out.println("\nLancement du jeu des orbites ...");
-        System.out.println("Appuyer pour continuer");
+        System.out.println(" - Les fusions se font dans le sens trigonometrique et vers l'intérieur du cercle pour les ponts");
+        System.out.println(" - Pour les sybmoles spéciaux, la fusion se fait sur la dernière lettre sélectionnée");
+        System.out.println("\nAppuyer pour continuer");
         
         this.scanner.nextLine().trim();
         

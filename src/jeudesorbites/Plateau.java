@@ -1,5 +1,6 @@
 package jeudesorbites;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -127,7 +128,7 @@ public class Plateau {
         // absolue des indices est de 1(cas normal) ou de 7(cas ou on referme le cercle) 
         if (Choix_plateau1.equals("plateau1") && Choix_plateau2.equals("plateau1")) {
             int diff = Math.abs(indice1 - indice2);
-            return  diff== 1 || diff == 7;
+            return diff == 1 || diff == 7;
         }
 
         // pareil pour plateau2 sauf que le cas ou on referme le cercle est de 3
@@ -143,14 +144,14 @@ public class Plateau {
 
         // on a plateau1 pour le 1er et plateau2 poiur le 2eme, alors on teste si les indices ont un facteur 2
         else if (Choix_plateau1.equals("plateau1") && Choix_plateau2.equals("plateau2")) {
-            return 2*indice2 == indice1;
+            return 2 * indice2 == indice1;
         }
 
         // on a plateau2 pour le 1er et plateau1 poiur le 2eme, alors on teste si les indices ont un facteur 2
         else if (Choix_plateau1.equals("plateau2") && Choix_plateau2.equals("plateau1")) {
-            return 2*indice1 == indice2;
+            return 2 * indice1 == indice2;
         }
-        
+
         // on a plateau1 pour le 1er et centre pour le 2eme ou inversement on renvoie false
         else if ((Choix_plateau1.equals("plateau1") && Choix_plateau2.equals("centre"))
                 || (Choix_plateau1.equals("centre") && Choix_plateau2.equals("plateau1"))) {
@@ -161,7 +162,38 @@ public class Plateau {
         else {
             return true;
         }
-        
+
+    }
+
+    public boolean existe_il_des_doublons_ds_tout_le_jeu() {
+        HashMap<Lettre, Integer> compteurs = new HashMap<>();
+
+        // On regroupe tout pour éviter de répéter le code
+        Lettre[][] tousLesPlateaux = {this.plateau1, this.plateau2, this.centre};
+
+        for (Lettre[] tab : tousLesPlateaux) {
+            for (Lettre l : tab) {
+                // 1. On vérifie les conditions de validité
+                if (l != null && !l.est_vide() && l.pas_egal_omega_ou_sigma_maj()) {
+                    
+                    // 2. On calcule le nouveau nombre d'apparitions
+                    int nb = compteurs.getOrDefault(l, 0) + 1;
+                    
+                    // 3. SI ON TROUVE 2 : ON COUPE TOUT
+                    if (nb >= 2) {
+                        //System.out.println("ALERTE : Doublon détecté pour " + l.getnom() + " ! Fusion possible.");
+                        // C'est ici qu'on s'arrête net
+                        return true; 
+                    }
+                    
+                    // Sinon on enregistre et on continue le scan
+                    compteurs.put(l, nb);
+                }
+            }
+        }
+        // Si on arrive ici, c'est qu'on a fini la boucle sans trouver de 2
+        //System.out.println("Pas de doublons");
+        return false;
     }
 
     public boolean est_ce_fusionnable(int indice1, String Choix_plateau1, int indice2, String Choix_plateau2,
@@ -192,13 +224,12 @@ public class Plateau {
         Lettre lettre2 = this.renvoie_lettre_plateau(indice2, Choix_plateau2);
 
         Lettre fusion = this.tableau_lettre_grec.fusion(lettre1, lettre2, symbol_plus_noir);
+        Lettre lettre_zero = this.tableau_lettre_grec.getzero();
 
         int fusion_score = lettre1.getvaleur() + lettre2.getvaleur();
 
-        this.modife_lettre_plateau(indice1, Choix_plateau1, fusion);
-
-        Lettre lettre_zero = this.tableau_lettre_grec.getzero();
-        this.modife_lettre_plateau(indice2, Choix_plateau2, lettre_zero);
+        this.modife_lettre_plateau(indice1, Choix_plateau1, lettre_zero);
+        this.modife_lettre_plateau(indice2, Choix_plateau2, fusion);
 
         return fusion_score;
     }
@@ -253,6 +284,19 @@ public class Plateau {
                 || this.existe_il_un_emplacement_vide_centre();
     }
 
+public boolean trouverLettreFusionnable(Lettre[] plateau) {
+    HashMap<Lettre, Integer> compteurs = new HashMap<>();
+
+    for (Lettre lettre : plateau) {
+        int nb = compteurs.getOrDefault(lettre, 0) + 1;
+        if (nb >= 2 && lettre.pas_egal_omega_ou_sigma_maj() && !lettre.est_vide()) {
+            return true; // On a trouvé la coupable !
+        }
+        compteurs.put(lettre, nb);
+    }
+    return false; // Aucune lettre en double
+}
+
     public void ajouter_lettre_plateau1_trigonometrique(int indice, Lettre Lettre_choisi)
     {
         Lettre Lettre_stockage_inter;
@@ -286,9 +330,10 @@ public class Plateau {
         centre[0] = Lettre_choisi;
     }
 
-    public boolean existe_il_une_fusion_ds_tout_le_jeu()
+    public boolean existe_il_une_fusion_ds_tout_le_jeu(boolean symbole_plus_noir)
     {
-        // on va devoir checker si une lettre est egal à celle qui suit
+        // on va devoir checker si une lettre est fusionnable à celle qui est adjacente
+        // si on  ale bonus noir+ s'est pris en compte
         //  en excluant le cas ou les lettres sont nulles
 
         int indice_next;
@@ -298,14 +343,14 @@ public class Plateau {
             indice_next = (i + 1) % this.plateau1.length;
 
             // lettres qui se suivent dans plateau1
-            if (this.plateau1[i].est_fusionable(this.plateau1[indice_next], false)) {
+            if (this.plateau1[i].est_fusionable(this.plateau1[indice_next], symbole_plus_noir)) {
                 return true;
             }
 
             // les ponts entre plateau1 et plateau2 correspondent
             //  aux éléments indices pairs sur plateau1
             if (i % 2 == 0) {
-                if (this.plateau1[i].est_fusionable(this.plateau2[i / 2], false)) {
+                if (this.plateau1[i].est_fusionable(this.plateau2[i / 2], symbole_plus_noir)) {
                     return true;
                 }
             }
@@ -315,12 +360,12 @@ public class Plateau {
             indice_next = (i + 1) % this.plateau2.length;
 
             // lettres qui se suivent dans plateau2
-            if (this.plateau2[i].est_fusionable(this.plateau2[indice_next], false)) {
+            if (this.plateau2[i].est_fusionable(this.plateau2[indice_next], symbole_plus_noir)) {
                 return true;
             }
 
             // les ponts entre plateau2 et le centre
-            if (this.centre[0].est_fusionable(this.plateau2[i], false)) {
+            if (this.centre[0].est_fusionable(this.plateau2[i], symbole_plus_noir)) {
                 return true;
             }
         }
@@ -350,8 +395,8 @@ public class Plateau {
                 Lettre fusion = this.tableau_lettre_grec.fusion(this.plateau1[i], this.plateau1[indice_next],
                         symbol_plus_noir);
                 // on remplace l'un des emplacement par la fusion des lettres et on libere l autre
-                this.plateau1[i] = fusion;
-                this.plateau1[indice_next] = lettre_zero;
+                this.plateau1[i] = lettre_zero;
+                this.plateau1[indice_next] = fusion;
                 return fusion_score;
             }
 
@@ -378,8 +423,8 @@ public class Plateau {
                 fusion_score = this.plateau2[i].getvaleur() + this.plateau2[indice_next].getvaleur();
                 Lettre fusion = this.tableau_lettre_grec.fusion(this.plateau2[i], this.plateau2[indice_next],
                         symbol_plus_noir);
-                this.plateau2[i] = fusion;
-                this.plateau2[indice_next] = lettre_zero;
+                this.plateau2[i] = lettre_zero;
+                this.plateau2[indice_next] = fusion;
                 return fusion_score;
             }
 
