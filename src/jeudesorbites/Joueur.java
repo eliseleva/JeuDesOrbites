@@ -14,9 +14,9 @@ public class Joueur {
     public Joueur() {
         this.score = 0;
 
-        this.nb_symbole_rouge = 10;
-        this.nb_symbole_noir = 10;
-        this.nb_symbole_vert = 10;
+        this.nb_symbole_rouge = 0;
+        this.nb_symbole_noir = 0;
+        this.nb_symbole_vert = 0;
     }
 
     public String toString() {
@@ -25,10 +25,14 @@ public class Joueur {
 
     public String toString_symboles() {
         String res = "";
-        res += "+rouges [" + String.format("%02d",this.nb_symbole_rouge) + "]";
-        res += "\n+noirs  [" + String.format("%02d",this.nb_symbole_noir) + "]";
-        res += "\n+vers   [" + String.format("%02d",this.nb_symbole_vert) + "]";
+        res += "+rouges [" + String.format("%02d", this.nb_symbole_rouge) + "]";
+        res += "\n+noirs  [" + String.format("%02d", this.nb_symbole_noir) + "]";
+        res += "\n+vers   [" + String.format("%02d", this.nb_symbole_vert) + "]";
         return res;
+    }
+    
+    public int getScore() {
+        return this.score;
     }
 
     public void add_score_fusion(int score_fusion_lettre) {

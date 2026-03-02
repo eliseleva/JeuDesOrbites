@@ -180,18 +180,19 @@ public class Plateau {
         else {
             // on s'assure que les conditions de fusion classique sont réunies et qu'on n'utilise pas deux fois la même lettre
             return lettre_1.est_fusionable(lettre_2, symbol_plus_noir)
-                    && (indice1 != indice2 || Choix_plateau1 != Choix_plateau2);
+                    && (indice1 != indice2 || !Choix_plateau1.equals(Choix_plateau2));
         }
     }
         
 
-    public int fusion_lettre_symbole(int indice1, String Choix_plateau1, int indice2, String Choix_plateau2, boolean symbol_plus_noir) {
+    public int fusion_lettre_symbole(int indice1, String Choix_plateau1, int indice2, String Choix_plateau2,
+            boolean symbol_plus_noir) {
         // attntion fusion doit être une copie
         Lettre lettre1 = this.renvoie_lettre_plateau(indice1, Choix_plateau1);
         Lettre lettre2 = this.renvoie_lettre_plateau(indice2, Choix_plateau2);
 
         Lettre fusion = this.tableau_lettre_grec.fusion(lettre1, lettre2, symbol_plus_noir);
-        
+
         int fusion_score = lettre1.getvaleur() + lettre2.getvaleur();
 
         this.modife_lettre_plateau(indice1, Choix_plateau1, fusion);
@@ -200,8 +201,23 @@ public class Plateau {
         this.modife_lettre_plateau(indice2, Choix_plateau2, lettre_zero);
 
         return fusion_score;
-        }
+    }
+
+    public boolean est_ce_une_lettre_vide(int indice1, String Choix_plateau1){
+        return this.renvoie_lettre_plateau(indice1, Choix_plateau1).est_vide();
+    }
+
+    public void deplacer_lettre(int indice1, String Choix_plateau1, int indice2, String Choix_plateau2) {
     
+        // attention, on fait pas une copie expres
+        Lettre lettre1 = this.renvoie_lettre_plateau(indice1, Choix_plateau1);
+
+        this.modife_lettre_plateau(indice2, Choix_plateau2, lettre1);
+
+        Lettre lettre_zero = this.tableau_lettre_grec.getzero();
+        this.modife_lettre_plateau(indice1, Choix_plateau1, lettre_zero);
+    }
+
     
     //Plateau 1
     public boolean existe_il_un_emplacement_vide_plateau1(){

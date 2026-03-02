@@ -8,8 +8,8 @@ package jeudesorbites;
  * @author elise_admin
  */
 public class main {
-        public static void main(String[] args) { 
-         
+    public static void main(String[] args) {
+
         Jeu JeuOrbite= new Jeu();
         JeuOrbite.start();
         

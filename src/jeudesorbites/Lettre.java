@@ -30,18 +30,24 @@ public class Lettre {
     
     public boolean est_fusionable(Lettre x, boolean symbole_plus_noir)
     {
+        // on teste si l'une des lettres n'est ni sigma majsucule ni omega car ce sont des lettres
+        // que l'on ne peut pas fusionner car elles sont à la fin de "l'alphabet"
+        // donc il n'y a pas de lettre suivante et ainsi la fusion est impossible 
+
+        // on teste aussi que l'une lettre n'est pas nulle
 
         if (symbole_plus_noir) {
-            // on n'a pas de condition sur l'égalité des lettres
-            return !this.est_vide() & !x.est_vide() & (this.valeur != 24 && this.valeur != 50) & (x.valeur != 24 && x.valeur != 50);
+            // on n'a pas de condition sur l'égalité des lettres avec noir+
+            return !this.est_vide() & !x.est_vide() & this.pas_egal_omega_ou_sigma_maj() & x.pas_egal_omega_ou_sigma_maj();
+        } else {
+            // Sinon on teste si les deux sont egales et l'une d'entre elle n'est pas vide
+            return this.nom.equals(x.nom) & !this.est_vide() & this.pas_egal_omega_ou_sigma_maj() & x.pas_egal_omega_ou_sigma_maj();
         }
-        else{
-             // on test si les deux sont egals et pas vide
-            // on teste aussi si l'une des lettres n'est ni sigma ni omega car ce sont des lettres
-            // que l'on ne peut pas fusionner car elles sont à la fin de
-            // "l'alphabet" 
-            return this.nom.equals(x.nom) & !this.est_vide() & (this.valeur!=24 && this.valeur!=50) & (x.valeur!=24 && x.valeur!=50);
-        }
+    }
+    
+    public boolean pas_egal_omega_ou_sigma_maj()
+    {
+        return this.valeur != 24 && this.valeur != 50;
     }
     
     public int getvaleur() {

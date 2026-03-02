@@ -1,4 +1,5 @@
 package jeudesorbites;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -11,6 +12,10 @@ public class Jeu {
     private Plateau plateau;
     private Joueur joueur;
     private Scanner scanner;
+    private int indice_depassement_score_100;
+
+    private int next_rouge_indice;
+    private int next_noir_indice;
 
     public Jeu() {      
  
@@ -20,13 +25,19 @@ public class Jeu {
         // Lettres
         this.plateau = new Plateau();
         this.joueur = new Joueur();
-        this.compteur_tour = 0;
+        this.compteur_tour = 1;
         this.scanner = new Scanner(System.in);
+
+        // pour les symboles
+        Random generateur = new Random();
+        this.indice_depassement_score_100 = 0;
+        this.next_rouge_indice = generateur.nextInt(6) + 5; //entre 5 et 10
+        this.next_noir_indice = generateur.nextInt(6) + 10; //entre 10 et 15
     }
        
     public String Choisir_un_des_3_plateau() {
         boolean condition = false;
-        String Choix = "";
+        String Choix;
         String res = "";
 
         while (!condition) {
@@ -50,11 +61,33 @@ public class Jeu {
                         break;
                 }
             } else {
-                System.out.println("Mauvaise entree: " + Choix + "\n");
+                this.message_erreur("[Mauvaise entree: " + Choix + "]");
             }
 
         }
         return res;
+    }
+
+    public void message_erreur(String message_erreur) {
+        System.out.println("\nERROR : " + message_erreur);
+        // on attend une entrée de l'utlisateur
+        this.scanner.nextLine().trim();
+    }
+
+    public int choisir_indice(int max) {
+        boolean condition = false;
+        String Choix="";
+        
+        while (!condition) {
+            System.out.println("\nChoisir emplacement [0-" + max +"]:");
+            Choix = this.scanner.nextLine().trim();
+            condition = Choix.matches("[0-" + max + "]");
+
+            if (!condition) {
+                this.message_erreur(Choix + " pas dans [0-" + max + "]");
+            }
+        }
+        return Integer.parseInt(Choix);
     }
     
     public String choisir_un_plateau_ou_un_emplacement_vide_existe(){
@@ -80,7 +113,7 @@ public class Jeu {
             }
 
             if (!condition) {
-                System.out.println("Le " + Choix_plateau +" n'a pas d'emplacement vide");
+                this.message_erreur("Le " + Choix_plateau +" n'a pas d'emplacement vide");
             }
         }
 
@@ -95,19 +128,11 @@ public class Jeu {
         //plateau 1
         switch(Choix_plateau){
             case "plateau1":
-                indice = -1;
-                while (indice < 0 || indice > 7) {
-                    System.out.println("Choisir emplacement [0-7]:");
-                    indice = Integer.parseInt(this.scanner.nextLine().trim());
-                }
+                indice = this.choisir_indice(7);
                 break;
 
             case "plateau2":
-                indice = -1;
-                while (indice < 0 || indice > 3) {
-                    System.out.println("Choisir emplacement [0-3]:");
-                    indice = Integer.parseInt(this.scanner.nextLine().trim());
-                }
+                indice = this.choisir_indice(3);
                 break;
 
             case "centre":
@@ -150,22 +175,35 @@ public class Jeu {
 
         // on demande jusqu'à avoir un symbole valide 
         while (!condition) {
-            System.out.println("\nSymboles Speciaux[Gestion apparition PAS IMPLEMENTE] :");
+            System.out.println("\nSymboles Speciaux :");
             System.out.println(this.joueur.toString_symboles());
-            System.out.println("Entree[passe], 0[symbole_rouge], 1[symbole_noir], 2[symbole_vert, PAS IMPLENTEE]");
+            System.out.println("Entree[passe], 0[+rouge], 1[+noir], 2[+vert]");
             Choix = this.scanner.nextLine().trim();
             switch (Choix) {
                 case "0":
-                    // renvoi true si on peut utiliser ce symbol
+
+                    // BUG ICI a implementer un truc qui teste s'il existe deux lettres identique dans le jeu
                     condition = this.joueur.can_use_symbol("symbole_rouge");
+                    if (!condition) {
+                        this.message_erreur("[+rouge n'est pas utilisable à ce tour]");
+                    }
                     break;
 
                 case "1":
+                    // BUG ICI a implementer un truc qui teste s'il existe deux lettres adjacentes
                     condition = this.joueur.can_use_symbol("symbole_noir");
+                    if (!condition) {
+                        this.message_erreur("[+noir n'est pas utilisable à ce tour]");
+                    }
                     break;
 
                 case "2":
-                    condition = this.joueur.can_use_symbol("symbole_vert");
+                    // Pour pouvoir utiliser ce symbole, il doit y avoir au moins un emplacement libre dans le jeu
+                    condition = this.joueur.can_use_symbol("symbole_vert")
+                            && this.plateau.existe_il_un_emplacement_vide_ds_jeu();
+                    if (!condition) {
+                        this.message_erreur("[+vert n'est pas utilisable à ce tour]");
+                    }
                     break;
 
                 // on sort dans tous les autres cas
@@ -177,7 +215,8 @@ public class Jeu {
         return Choix;
     }
 
-    public void symbole_fusion(boolean symbol_plus_noir, String message_error_symbol, String message_affichage) {
+    public void symbole_fusion_symbole_rouge_ou_noir(boolean symbol_plus_noir, String message_error_symbol, String message_affichage) {
+        // methode pour la fusion avec le symbole +rouge et +noir
 
         boolean condition = false;
 
@@ -201,10 +240,10 @@ public class Jeu {
             if (this.plateau.est_ce_fusionnable(indice1, Choix_plateau1, indice2, Choix_plateau2, symbol_plus_noir)) {
                 condition = true;
             } else {
-                String message_error = "\nLa lettre [" + Choix_plateau1 + "," + indice1 + "] et La lettre [";
+                String message_error = "La lettre [" + Choix_plateau1 + "," + indice1 + "] et La lettre [";
                 message_error += Choix_plateau2 + "," + indice2
                         + "] ne sont pas fusionnable dans le cadre du symbole" + message_error_symbol;
-                System.out.println(message_error);
+                this.message_erreur(message_error);
                 this.plateau.plateau_affichage();
             }
         }
@@ -217,13 +256,47 @@ public class Jeu {
         this.plateau.plateau_affichage();
     }
 
-    public void symbole_vert() {
+    public void symbole_vert_deplacement_lettre() {
         
-        System.out.println("\nSuppression lettre [vert+]");
-        String Choix_plateau = this.Choisir_un_des_3_plateau();
-        int indice = this.selectionner_indice_selon_plateau(Choix_plateau);
+        System.out.println("\n== Suppression lettre [vert+] ==");
 
-        System.out.println("\n================== Suppresion +vert[" + Choix_plateau + "," + indice + "]  =========================");
+        boolean condition1 = false;
+        boolean condition2 = false;
+
+        String Choix_plateau1 = "";
+        String Choix_plateau2 = "";
+
+        int indice1 = -1;
+        int indice2 = -1;
+
+        while (!condition1) {
+
+            System.out.println("\n======Choisir lettre non vide=====");
+            Choix_plateau1 = this.Choisir_un_des_3_plateau();
+            indice1 = this.selectionner_indice_selon_plateau(Choix_plateau1);
+            condition1 = (!this.plateau.est_ce_une_lettre_vide(indice1, Choix_plateau1));
+        
+            if (!condition1) {
+                this.message_erreur(Choix_plateau1 +"[" + indice1 +"] est vide");
+            }
+        }
+        
+        while (!condition2) {
+            
+            System.out.println("\n======Choisir un emplacement vide=====");
+            Choix_plateau2 = this.Choisir_un_des_3_plateau();
+            indice2 = this.selectionner_indice_selon_plateau(Choix_plateau2);
+            condition2 = this.plateau.est_ce_une_lettre_vide(indice2, Choix_plateau2);
+        
+            if (!condition2) {
+                this.message_erreur(Choix_plateau2 +"[" + indice2 +"] n est pas vide");
+            }
+        }
+        
+        this.plateau.deplacer_lettre(indice1, Choix_plateau1, indice2, Choix_plateau2);
+
+    
+        System.out.println("\n================== +vert " + Choix_plateau1 + "[" + indice1 + "] => " + Choix_plateau2 +"[" +indice2 + "]   =========================");
         this.plateau.plateau_affichage();
     }
 
@@ -245,19 +318,18 @@ public class Jeu {
                 case "0":
                     this.joueur.use_one_symbol("symbole_rouge");
 
-                    this.symbole_fusion(false, " rouge (identique, emplacements differents)", "rouge");
+                    this.symbole_fusion_symbole_rouge_ou_noir(false, " rouge (identique, emplacements differents)", "rouge");
                     break;
 
                 case "1":
                     this.joueur.use_one_symbol("symbole_noir");
 
-                    this.symbole_fusion(true, " noir (adjacents uniquement)", "noir");
+                    this.symbole_fusion_symbole_rouge_ou_noir(true, " noir (adjacents uniquement)", "noir");
                     break;
 
                 case "2":
                     this.joueur.use_one_symbol("symbole_vert");
-                    this.symbole_vert();
-                    this.plateau.plateau_affichage();
+                    this.symbole_vert_deplacement_lettre();
                     break;
                 // on sort dans tous les autres cas
                 default:
@@ -266,22 +338,63 @@ public class Jeu {
         }
     }
 
-    public void fusions_en_cascade(){
+    public void fusions_en_cascade() {
         //realisation des fusions
         int fusion_score;
         int compteur_fusion = 1;
         while (this.plateau.existe_il_une_fusion_ds_tout_le_jeu()) {
-            
+
             fusion_score = this.plateau.faire_une_fusion_ds_le_jeu();
-            System.out.println("\n================== Fusion " + compteur_fusion + "[+"+ fusion_score+"pts]==================");
+            System.out.println(
+                    "\n================== Fusion " + compteur_fusion + "[+" + fusion_score + "pts]==================");
             this.plateau.plateau_affichage();
             this.joueur.add_score_fusion(fusion_score);
             compteur_fusion += 1;
-        }      
+        }
+    }
+    
+    public void ajout_symboles() {
+        Random generateur = new Random();
+
+        // symbole rouge tous les 5/10 tours
+        if (this.compteur_tour == this.next_rouge_indice) {
+            this.next_rouge_indice = this.compteur_tour + generateur.nextInt(6) + 5;
+            this.joueur.add_one_symbol("symbole_rouge");  
+        }
+
+        // symbole noir tous les 10/15 tours
+        if (this.compteur_tour == this.next_noir_indice) {
+            this.next_noir_indice = this.compteur_tour + generateur.nextInt(6) + 10;
+            this.joueur.add_one_symbol("symbole_noir");  
+        }
+
+        // symbole vert, tous les 5 tours des que le score depasse 100
+        if (this.joueur.getScore() > 100) {
+            // si c'est la première fois qu'on depasse 100, on garde en mémoire l'indice 
+            if (this.indice_depassement_score_100 == 0) {
+                this.indice_depassement_score_100 = this.compteur_tour;
+            }
+            // à partir de l'indice gardé en mémoire tel score>100 pour la 1er fois, tous les 5 tours, on donne un bonus
+            if ((this.compteur_tour-this.indice_depassement_score_100)%5==0){
+                this.joueur.add_one_symbol("symbole_vert");  
+            } 
+        }
     }
 
     public void next_tour()
     {
+
+        System.out.println("\n==============================================");
+        System.out.println("================== Tour " +  this.compteur_tour + " ==================");
+        System.out.println("==============================================");
+
+        // la méthode gère tout
+        this.ajout_symboles();
+
+        System.out.println(this.joueur.toString());
+        System.out.println(this.joueur.toString_symboles());    
+        
+        // affichage jeu
         this.plateau.plateau_affichage();
 
         // on tire au sort une lettre
@@ -306,20 +419,20 @@ public class Jeu {
         // (mais on a mis -1 comme compteur de temps pour cette raison sur ces lettres)
         this.plateau.incrementer_tous_les_compteurs_temps_majuscules();
     }
+
     
     public void start()
     {
-        this.compteur_tour += 1;
-
+        System.out.println("\nLancement du jeu des orbites ...");
+        System.out.println("Appuyer pour continuer");
+        
+        this.scanner.nextLine().trim();
+        
         // tant qu'il y a un emplacement vide dans le jeu, on contiue à jouer 
         while (this.plateau.existe_il_un_emplacement_vide_ds_jeu())
         {
-            System.out.println("\n==============================================");
-            System.out.println("================== Tour " +  this.compteur_tour + " ==================");
-            System.out.println("==============================================");
-            System.out.println(this.joueur.toString());
-            System.out.println(this.joueur.toString_symboles());
-            
+
+            // on lance le tour de jeu
             this.next_tour();
 
             this.compteur_tour += 1;
@@ -327,9 +440,8 @@ public class Jeu {
 
         System.out.println("\n===== Score final =====");
         System.out.println(this.joueur.toString());
+        this.scanner.nextLine().trim();
     }
-   
-    
-   
+
 }
 
